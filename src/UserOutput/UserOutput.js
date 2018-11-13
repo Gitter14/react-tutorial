@@ -8,6 +8,6 @@ const useroutput = (props) => {
             <p> XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX </p>
         </div>
     )
-}
+};
 
 export default useroutput;

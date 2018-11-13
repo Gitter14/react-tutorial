@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
-import Userinput from './UserInput/UserInput';
-import Useroutput from './UserOutput/UserOutput';
+import UserInput from './UserInput/UserInput';
+import UserOutput from './UserOutput/UserOutput';
 
 class App extends Component {
 
-  state = {username: ''};
+  state = {username: 'supermax'};
 
   changeHandler = (event) =>{
       this.setState({username: event.target.value});
@@ -14,10 +14,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Userinput changed={this.changeHandler.bind(this,)}/>
-        <Useroutput username={this.state.username}/>
-        <Useroutput username={'Hi'}/>
-        <Useroutput username={'Dzień dobry'}/>
+        <UserInput changed={this.changeHandler.bind(this,)} currentName={this.state.username}/>
+        <UserOutput username={this.state.username}/>
+        <UserOutput username={this.state.username}/>
+        <UserOutput username={'Dzień dobry'}/>
       </div>
     )
   }
