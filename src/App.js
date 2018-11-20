@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ValidationComponent from './ValidationComponent/ValidationComponent';
 import './App.css';
 
 const InputComponent = (props) => {
@@ -17,10 +16,31 @@ const InputComponent = (props) => {
 
   return (
     <div style={styles} key='asdf111'>
-      <input type="text" onKeyDown={props.pressed} name={'TxtInput'} value={props.input} autoFocus={true}/>
+      <input type="text" onChange={props.changed} name={'TxtInput'} value={props.input} autoFocus={true}/>
       {displayInputLength}
     </div>
   )
+}
+
+const ValidationComponent = (props) => {
+  const styles = {
+    boxShadow: '0, 3px, 4px, #000',
+    margin: '16px 30%',
+    padding: '16px',
+    border: '8px double #000'
+  }
+
+  let display = (<p>Text not long enough.</p>);
+
+  if (props.textlength > props.treshold){
+      display = (<p>Text length is OK.</p>);
+  }
+
+  return(
+      <div key='InputLengthValidation' style={styles}>
+          {display}
+      </div>
+  );
 }
 
 const CharComponent = (props) => {
@@ -42,90 +62,21 @@ const CharComponent = (props) => {
 
 class App extends Component {
 
-  state = {input: '',chars: [],keys: [],inputTreshold: 7,cursorPosition: 0};
+  state = {chars: [],inputTreshold: 7};
 
   exerciseListStyle = {
     textAlign: 'left', 
   }
 
-  pressedKeyHandler = (event) => {
-    const all = {...this.state};
-    let cursorPosition = all.cursorPosition;
-    let charArrays = [...this.state.chars];
-    let myKeys = [...this.state.keys];
-    switch(event.key) {
-      case 'Enter':
-      case 'Tab':
-      case 'Shift':
-      case 'Control':
-      case 'Alt':
-      case 'AltGraph':
-      case 'Escape':
-      case 'ScrollLock':
-      case 'CapsLock':
-      case 'NumLock':
-      case 'Insert':
-      case 'PageUp':
-      case 'PageDown':
-      case 'F1':
-      case 'F2':
-      case 'F3':
-      case 'F4':
-      case 'F5':
-      case 'F6':
-      case 'F7':
-      case 'F8':
-      case 'F9':
-      case 'F10':
-      case 'F11':
-      case 'F12':
-        break;
-      case 'Home':
-        cursorPosition = 0;
-        break;
-      case 'End':
-        if (charArrays.length > 0)
-          cursorPosition = charArrays.length;
-        break;
-      case 'Backspace':
-        if(cursorPosition>0){
-          charArrays.splice(cursorPosition-1,1);
-          myKeys.splice(cursorPosition-1,1);
-          cursorPosition--;
-        }
-        break;
-      case 'Delete':
-        if(cursorPosition<charArrays.length)
-          charArrays.splice(cursorPosition,1);
-          myKeys.splice(cursorPosition,1);
-        break;
-      case 'ArrowUp':
-      case 'ArrowDown':
-        break;
-      case 'ArrowRight':
-        if(cursorPosition < charArrays.length)
-          cursorPosition++;
-        break;
-      case 'ArrowLeft':
-        if (cursorPosition > 0)
-          cursorPosition--;
-        break;
-      default:
-        charArrays.splice(cursorPosition,0,event.key);
-        myKeys.splice(cursorPosition,0,new Date().getTime());
-        cursorPosition++;
-        break;
-    }
-
-    this.setState({input: charArrays.join(''),chars: charArrays,keys: myKeys,cursorPosition: cursorPosition});
+  deleteCharHandler = (index) => {
+    const chars = [...this.state.chars];
+    chars.splice(index,1);
+    this.setState({chars: chars});
   }
 
-  deleteCharHandler = (index) => {
-    let chars = [...this.state.chars];
-    let keys = [...this.state.keys];
-    chars.splice(index,1);
-    keys.splice(index,1);
-    this.setState({chars: chars,keys: keys});
+  changedHandler = (event) => {
+    const oldChars = event.target.value.split('');
+    this.setState({chars: oldChars});
   }
 
   render() {
@@ -141,12 +92,12 @@ class App extends Component {
           <li>When you click CharComponent it should be removed from entered text.</li>
         </ol>
         <InputComponent 
-            pressed={this.pressedKeyHandler.bind(this)}
-            input={this.state.input}
+            changed={this.changedHandler.bind(this)}
+            input={this.state.chars.join('')}
         />
-        <ValidationComponent textlength={this.state.input.length} treshold={this.state.inputTreshold}/>
+        <ValidationComponent textlength={this.state.chars.length} treshold={this.state.inputTreshold}/>
         {this.state.chars.map((charSign,index)=>{
-          return (<CharComponent key={this.state.keys[index]} mychar={charSign} clicked={() => this.deleteCharHandler(index)}/>)
+          return (<CharComponent key={'jasd'+index} mychar={charSign} clicked={() => this.deleteCharHandler(index)}/>)
         })}
       </div>
     )
